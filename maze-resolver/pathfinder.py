@@ -8,12 +8,11 @@ def coordinate_parser(pos, width):
 
 def calc_neigbors(point, graph, height, width):
     neigbors = 0
-
     # check only point
     if graph[point]:
         if point <= height * (width - 1):
             pos_down = point + width
-            if graph[pos_down] and point > width:
+            if graph[pos_down]:
                 neigbors += 1
 
         if point > width:
@@ -30,15 +29,20 @@ def calc_neigbors(point, graph, height, width):
             pos_left = point - 1
             if graph[pos_left]:
                 neigbors += 1
-
+    # level of this point
     return neigbors
 
-def is_vertex(graph, point, level):
+
+def is_vertex(point, level, graph, start , stop):
     # check only point
     if graph[point]:
         # this is not a Vertex only when having only 2 neigbors
         if level == 2:
-            return False
+            # exception when this point was chosen as SOURCE or TARGET
+            if point == start or point == stop:
+                return True
+            else:
+                return False
         else:
             return True
 
@@ -51,7 +55,7 @@ def edge_member(point, edge_list):
 
 def graph_serializer(line, row_index, width):
     ser_line = {}
-    init_col = 1
+    init_col = 0
     for i in line:
         pos = row_index * width + init_col
         # make this point is walkable
@@ -87,9 +91,9 @@ def graph_load():
             graph.update(row)
             maze_row += 1
         elif row_index == height + 2:
-            start_pos = int (line_data)
+            start_pos = int(line_data)
         elif row_index == height + 3 :
-            exit_pos = int (line_data)
+            exit_pos = int(line_data)
         row_index += 1
     f.close()
     return {
@@ -104,16 +108,16 @@ def graph_load():
 def main():
     file = graph_load()
     graph = file.get("graph")
-    g_height = (file.get("height"))
-    g_width = (file.get("width"))
-    source = (file.get("start_pos"))
-    target = (file.get("exit_pos"))
+    g_height = int(file.get("height"))
+    g_width = int(file.get("width"))
+    source = file.get("start_pos")
+    target = file.get("exit_pos")
     edge_list = []
     vertices_list = []
     for point in graph.keys():
         level = calc_neigbors(point, graph, g_height, g_width)
         print("Point {} : level {}".format(point, level))
-        if is_vertex(graph, point, level):
+        if is_vertex(point, level, graph, source, target):
             vertices_list.append(point)
             # print("position {}={}".format(point, graph[point]))
     print("vertices_list : {}".format(vertices_list))
