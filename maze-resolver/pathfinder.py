@@ -6,31 +6,31 @@ def coordinate_parser(pos, width):
     p_col = pos%width
     return {"row": p_row, "col": p_col}
 
-def calc_neigbors(point, graph, height, width):
-    neigbors = 0
+def calc_level(point, graph, height, width):
+    level = 0
     # check only point
     if graph[point]:
         if point <= height * (width - 1):
             pos_down = point + width
             if graph[pos_down]:
-                neigbors += 1
+                level += 1
 
         if point > width:
             pos_up = point - width
             if graph[pos_up]:
-                neigbors += 1
+                level += 1
 
         if point%width > 0:
             pos_right = point + 1
             if graph[pos_right]:
-                neigbors += 1
+                level += 1
 
         if point%width > 1:
             pos_left = point - 1
             if graph[pos_left]:
-                neigbors += 1
+                level += 1
     # level of this point
-    return neigbors
+    return level
 
 
 def is_vertex(point, level, graph, start , stop):
