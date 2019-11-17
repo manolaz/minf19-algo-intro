@@ -6,6 +6,7 @@ def coordinate_parser(pos, width):
     p_col = pos%width
     return {"row": p_row, "col": p_col}
 
+
 def calc_level(point, graph, height, width):
     level = 0
     # check only point
@@ -46,12 +47,25 @@ def is_vertex(point, level, graph, start , stop):
         else:
             return True
 
-def edge_member(point, edge_list):
-    connections = 0
-    if connections == 2:
-        return True
+def weight_calculate(start, stop):
+    weight = 1
+    h_start = start//width
+    h_stop = stop//width
+    col_start = start%
+    # two verticle on same row
+    if h_start == h_stop:
+        weight = stop - start
     else:
-        return False
+        weight = h_stop - h_start
+    edge = (stop, weight)
+    return edge
+
+# to complete
+def to_adjacent_list(vertices_list):
+    for vertex in vertices_list:
+        coordinate_parser(pow, width)
+
+
 
 def graph_serializer(line, row_index, width):
     ser_line = {}
@@ -115,7 +129,7 @@ def main():
     edge_list = []
     vertices_list = []
     for point in graph.keys():
-        level = calc_neigbors(point, graph, g_height, g_width)
+        level = calc_level(point, graph, g_height, g_width)
         print("Point {} : level {}".format(point, level))
         if is_vertex(point, level, graph, source, target):
             vertices_list.append(point)
