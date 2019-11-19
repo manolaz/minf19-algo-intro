@@ -6,8 +6,8 @@ class Vertex:
         self.adjacent = {}
         # Set distance to infinity for all nodes
         self.distance = sys.maxint
-        # Mark all nodes unvisited        
-        self.visited = False  
+        # Mark all nodes unvisited
+        self.visited = False
         # Predecessor
         self.previous = None
 
@@ -15,7 +15,7 @@ class Vertex:
         self.adjacent[neighbor] = weight
 
     def get_connections(self):
-        return self.adjacent.keys()  
+        return self.adjacent.keys()
 
     def get_id(self):
         return self.id
@@ -87,7 +87,7 @@ import heapq
 
 def dijkstra(aGraph, start):
     print '''Dijkstra's shortest path'''
-    # Set the distance for the start node to zero 
+    # Set the distance for the start node to zero
     start.set_distance(0)
 
     # Put tuple pair into the priority queue
@@ -95,7 +95,7 @@ def dijkstra(aGraph, start):
     heapq.heapify(unvisited_queue)
 
     while len(unvisited_queue):
-        # Pops a vertex with the smallest distance 
+        # Pops a vertex with the smallest distance
         uv = heapq.heappop(unvisited_queue)
         current = uv[1]
         current.set_visited()
@@ -106,7 +106,7 @@ def dijkstra(aGraph, start):
             if next.visited:
                 continue
             new_dist = current.get_distance() + current.get_weight(next)
-            
+
             if new_dist < next.get_distance():
                 next.set_distance(new_dist)
                 next.set_previous(current)
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     g = Graph()
 
-    # 1(17,2)
+# 1(17,2)
 # 17(1,2)(21,4)(33,2)
 # 21(17,4)(22,1)(52,5)
 # 22(21,1)
@@ -143,7 +143,7 @@ if __name__ == '__main__':
 # 78(76,2)
 
 
-    # Add list vertices 
+    # Add list vertices
 
     g.add_vertex('1')
     g.add_vertex('17')
@@ -158,8 +158,8 @@ if __name__ == '__main__':
     g.add_vertex('34')
     g.add_vertex('55')
 
-    # Add list edge 
-    g.add_edge('1', '17', 2)  
+    # Add list edge
+    g.add_edge('1', '17', 2)
     g.add_edge('21', '17', 4)
     g.add_edge('21', '22', 1)
     g.add_edge('21', '52', 5)
@@ -181,8 +181,8 @@ if __name__ == '__main__':
             wid = w.get_id()
             print '( %s , %s, %3d)'  % ( vid, wid, v.get_weight(w))
 
-            
-    dijkstra(g, g.get_vertex('17')) 
+
+    dijkstra(g, g.get_vertex('17'))
 
     target = g.get_vertex('55')
     path = [target.get_id()]

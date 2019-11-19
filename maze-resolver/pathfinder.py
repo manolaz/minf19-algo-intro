@@ -47,11 +47,12 @@ def is_vertex(point, level, graph, start , stop):
         else:
             return True
 
-def weight_calculate(start, stop):
+def weight_calculate(start, stop, width):
     weight = 1
     h_start = start//width
     h_stop = stop//width
-    col_start = start%
+    col_start = start % width
+    col_stop = start % width
     # two verticle on same row
     if h_start == h_stop:
         weight = stop - start
@@ -61,7 +62,7 @@ def weight_calculate(start, stop):
     return edge
 
 # to complete
-def to_adjacent_list(vertices_list):
+def to_adjacent_list(vertices_list, width):
     for vertex in vertices_list:
         coordinate_parser(pow, width)
 
