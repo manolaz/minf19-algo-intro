@@ -2,30 +2,30 @@
 import traceback
 
 
-def follow_path(start, stop, graph, width):
+def follow_path(start, stop, graph, width, virtuals):
     weight = 0
     destination = start
-    if graph[destination] == 123:
+    if graph.get(destination) == 123:
         weight += 1
-        while graph[start] is True:
+        while graph.get(start) is True:
             destination += 1
-    if graph[destination] == 129:
-        weight += 1
-        while graph[(start - 1)] is True:
+    if graph.get(destination) == 129:
+        weight -= 1
+        while graph.get(destination) is True:
             destination -= 1
-    if graph[destination] == 63:
-        weight += 1
-        while graph[(start + width)] is True:
+    if graph.get(destination) == 63:
+        weight += weight
+        while graph.get(destination) is True:
             destination += width
-    if graph[destination] == 69:
-        weight += 1
-        while graph[(start - width)] is True:
+    if graph.get(destination) == 69:
+        weight -= weight
+        while graph.get(destination) is True:
             destination -= width
     # Recursive call
     if destination == stop:
         return {destination, weight}
     else:
-        follow_path(destination, width, graph, stop)
+        return None
 
 
 def weight_calculate(start, stop, width):
@@ -85,7 +85,7 @@ def is_vertex(height, width, point, graph, start, stop):
                     return 129
                 if (point % width > 0) and graph[pos_right]:
                     return 123
-            if (point <= height * (width - 1)) and graph[pos_down]:
+            if (point <= (height * (width - 1) - 1)) and graph[pos_down]:
                 if (point % width > 1) and graph[pos_left]:
                     return 69
                 if (point % width > 0) and graph[pos_right]:
@@ -173,7 +173,8 @@ def main():
     g_width = int(file.get("width"))
     source = file.get("start_pos")
     target = file.get("exit_pos")
-    edge_list = []
+    # edge_list = []
+    # angles = []
     vertices_list = []
     virtual_vertices = []
     for point in graph.keys():
@@ -191,13 +192,6 @@ def main():
             # print("position {}={}".format(point, graph[point]))
     print("REAL vertices_list : {}".format(vertices_list))
     print("VIRTUAL vertices : {}".format(virtual_vertices))
-
-    combined_list = vertices_list.append(virtual_vertices)
-    print("Combined {}".format(combined_list))
-
-    path = follow_path(source, target, graph, g_width)
-
-    print(path)
 
 
 if __name__ == "__main__":
