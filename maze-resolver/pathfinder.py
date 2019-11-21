@@ -1,26 +1,54 @@
 # import itertools
 import traceback
 
-def weight_calculate(start, stop, width, virtual_vertices):
+
+def follow_path(start, stop, graph, width):
     weight = 0
-    h_start = start//width
-    h_stop = stop//width
-    col_start = start%width
-    col_stop = start%width
+    destination = start
+    if graph[destination] == 123:
+        weight += 1
+        while graph[start] is True:
+            destination += 1
+    if graph[destination] == 129:
+        weight += 1
+        while graph[(start - 1)] is True:
+            destination -= 1
+    if graph[destination] == 63:
+        weight += 1
+        while graph[(start + width)] is True:
+            destination += width
+    if graph[destination] == 69:
+        weight += 1
+        while graph[(start - width)] is True:
+            destination -= width
+    # Recursive call
+    if destination == stop:
+        return {destination, weight}
+    else:
+        follow_path(destination, width, graph, stop)
+
+
+def weight_calculate(start, stop, width):
+    weight = 0
+    start = coordinate_parser(start, width)
+    stop = coordinate_parser(stop, width)
     # two verticle on same row
-    if h_start == h_stop:
-        weight = stop - start
-    elif col_start == col_stop:
-        weight = h_stop - h_start
+    if start["row"] == stop["row"]:
+        weight = stop["col"] - start["col"]
+    # two verticle on same column
+    elif start["col"] == stop["col"]:
+        weight = stop["row"] - start["row"]
     edge = (stop, weight)
     return edge
 
+
 def coordinate_parser(pos, width):
-    p_row = pos//width
-    p_col = pos%width
+    p_row = pos // width
+    p_col = pos % width
     return {"row": p_row, "col": p_col}
 
-def is_vertex(height, width, point, graph, start , stop):
+
+def is_vertex(height, width, point, graph, start, stop):
     level = 0
     # check only point
     if graph[point]:
@@ -34,12 +62,12 @@ def is_vertex(height, width, point, graph, start , stop):
             if graph[pos_up]:
                 level += 1
 
-        if point%width > 0:
+        if point % width > 0:
             pos_right = point + 1
             if graph[pos_right]:
                 level += 1
 
-        if point%width > 1:
+        if point % width > 1:
             pos_left = point - 1
             if graph[pos_left]:
                 level += 1
@@ -52,15 +80,15 @@ def is_vertex(height, width, point, graph, start , stop):
 
             # find virtual Vertex
             # identifier as Watch face directions
-            if (point > width) and graph[pos_up] :
-                if (point%width > 1) and graph[pos_left]:
+            if (point > width) and graph[pos_up]:
+                if (point % width > 1) and graph[pos_left]:
                     return 129
-                if (point%width > 0) and graph[pos_right]:
+                if (point % width > 0) and graph[pos_right]:
                     return 123
-            if(point <= height * (width - 1)) and graph[pos_down]:
-                if (point%width > 1) and graph[pos_left]:
+            if (point <= height * (width - 1)) and graph[pos_down]:
+                if (point % width > 1) and graph[pos_left]:
                     return 69
-                if (point%width > 0) and graph[pos_right]:
+                if (point % width > 0) and graph[pos_right]:
                     return 63
         # IF level is not 2
         if level != 2:
@@ -70,6 +98,7 @@ def is_vertex(height, width, point, graph, start , stop):
                 return False
     else:
         return False
+
 
 def graph_serializer(line, row_index, width):
     ser_line = {}
@@ -99,7 +128,7 @@ def graph_load():
     maze_row = 0
     for line in f:
         line_data = line.rstrip()
-        if row_index == 0 :
+        if row_index == 0:
             height = int(line_data)
         elif row_index == 1:
             width = int(line_data)
@@ -110,25 +139,20 @@ def graph_load():
             maze_row += 1
         elif row_index == height + 2:
             start_pos = int(line_data)
-        elif row_index == height + 3 :
+        elif row_index == height + 3:
             exit_pos = int(line_data)
         row_index += 1
     f.close()
     return {
-            "height" :height,
-            "width": width,
-            "start_pos": start_pos,
-            "exit_pos": exit_pos,
-            "graph": graph
-            }
+        "height": height,
+        "width": width,
+        "start_pos": start_pos,
+        "exit_pos": exit_pos,
+        "graph": graph,
+    }
 
-# def path_find(start, stop, width, height):
-#     paths = []
-#     start_coor = coordinate_parser(start, width)
-#     stop_coor = coordinate_parser(stop, width)
-#     return paths
 
-def build_adjacency_list(vertices, width, height):
+def build_adjacency_list(vertices, virtuals, width, height):
     adjacent_list = []
     for vertex in vertices:
         links = [vertex]
@@ -168,6 +192,13 @@ def main():
     print("REAL vertices_list : {}".format(vertices_list))
     print("VIRTUAL vertices : {}".format(virtual_vertices))
 
+    combined_list = vertices_list.append(virtual_vertices)
+    print("Combined {}".format(combined_list))
 
-if __name__ == '__main__':
+    path = follow_path(source, target, graph, g_width)
+
+    print(path)
+
+
+if __name__ == "__main__":
     main()
