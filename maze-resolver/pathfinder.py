@@ -1,4 +1,5 @@
 # import itertools
+import traceback
 
 def weight_calculate(start, stop, width, virtual_vertices):
     weight = 0
@@ -11,8 +12,6 @@ def weight_calculate(start, stop, width, virtual_vertices):
         weight = stop - start
     elif col_start == col_stop:
         weight = h_stop - h_start
-
-
     edge = (stop, weight)
     return edge
 
@@ -21,7 +20,7 @@ def coordinate_parser(pos, width):
     p_col = pos%width
     return {"row": p_row, "col": p_col}
 
-def calc_level(point, graph, height, width):
+def is_vertex(height, width, point, graph, start , stop):
     level = 0
     # check only point
     if graph[point]:
@@ -44,35 +43,33 @@ def calc_level(point, graph, height, width):
             pos_left = point - 1
             if graph[pos_left]:
                 level += 1
-        # find virtual Vertex
-        if level == 2:
-            if (graph[pos_left] and graph[pos_up]):
-                level = 8
-            if ((graph[pos_left] and graph[pos_down])):
-                level = 8
-            if (graph[pos_right] and graph[pos_down]):
-                level = 8
-            if (graph[pos_right] and graph[pos_down]):
-                level = 8
-    # level of this point
-    return level
 
-
-def is_vertex(point, level, graph, start , stop):
-    # check only point
-    if graph[point]:
         # this is not a Vertex only when having only 2 neigbors
         if level == 2:
             # exception when this point was chosen as SOURCE or TARGET
             if point == start or point == stop:
                 return True
+
+            # find virtual Vertex
+            # identifier as Watch face directions
+            if (point > width) and graph[pos_up] :
+                if (point%width > 1) and graph[pos_left]:
+                    return 129
+                if (point%width > 0) and graph[pos_right]:
+                    return 123
+            if(point <= height * (width - 1)) and graph[pos_down]:
+                if (point%width > 1) and graph[pos_left]:
+                    return 69
+                if (point%width > 0) and graph[pos_right]:
+                    return 63
+        # IF level is not 2
+        if level != 2:
+            if level != 0:
+                return True
             else:
                 return False
-        if level == 8:
-            # VIRTUAL NODE IDENTIFIER
-            return 8
-        else:
-            return True
+    else:
+        return False
 
 def graph_serializer(line, row_index, width):
     ser_line = {}
@@ -156,15 +153,19 @@ def main():
     vertices_list = []
     virtual_vertices = []
     for point in graph.keys():
-        level = calc_level(point, graph, g_height, g_width)
-        print("Point {} : level {}".format(point, level))
-        vertex = is_vertex(point, level, graph, source, target)
+        try:
+            vertex = is_vertex(g_height, g_width, point, graph, source, target)
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
+
         if vertex is True:
             vertices_list.append(point)
-        if vertex == 8:
+        elif vertex in [123, 129, 63, 69]:
+            print("POINT {} , virtual moving {}".format(point, vertex))
             virtual_vertices.append(point)
             # print("position {}={}".format(point, graph[point]))
-    print("vertices_list : {}".format(vertices_list))
+    print("REAL vertices_list : {}".format(vertices_list))
     print("VIRTUAL vertices : {}".format(virtual_vertices))
 
 
