@@ -1,11 +1,25 @@
-import os
-import io
+# import itertools
+
+def weight_calculate(start, stop, width, virtual_vertices):
+    weight = 0
+    h_start = start//width
+    h_stop = stop//width
+    col_start = start%width
+    col_stop = start%width
+    # two verticle on same row
+    if h_start == h_stop:
+        weight = stop - start
+    elif col_start == col_stop:
+        weight = h_stop - h_start
+
+
+    edge = (stop, weight)
+    return edge
 
 def coordinate_parser(pos, width):
     p_row = pos//width
     p_col = pos%width
     return {"row": p_row, "col": p_col}
-
 
 def calc_level(point, graph, height, width):
     level = 0
@@ -30,6 +44,16 @@ def calc_level(point, graph, height, width):
             pos_left = point - 1
             if graph[pos_left]:
                 level += 1
+        # find virtual Vertex
+        if level == 2:
+            if (graph[pos_left] and graph[pos_up]):
+                level = 8
+            if ((graph[pos_left] and graph[pos_down])):
+                level = 8
+            if (graph[pos_right] and graph[pos_down]):
+                level = 8
+            if (graph[pos_right] and graph[pos_down]):
+                level = 8
     # level of this point
     return level
 
@@ -44,29 +68,11 @@ def is_vertex(point, level, graph, start , stop):
                 return True
             else:
                 return False
+        if level == 8:
+            # VIRTUAL NODE IDENTIFIER
+            return 8
         else:
             return True
-
-def weight_calculate(start, stop, width):
-    weight = 1
-    h_start = start//width
-    h_stop = stop//width
-    col_start = start % width
-    col_stop = start % width
-    # two verticle on same row
-    if h_start == h_stop:
-        weight = stop - start
-    else:
-        weight = h_stop - h_start
-    edge = (stop, weight)
-    return edge
-
-# to complete
-def to_adjacent_list(vertices_list, width):
-    for vertex in vertices_list:
-        coordinate_parser(pow, width)
-
-
 
 def graph_serializer(line, row_index, width):
     ser_line = {}
@@ -119,6 +125,25 @@ def graph_load():
             "graph": graph
             }
 
+# def path_find(start, stop, width, height):
+#     paths = []
+#     start_coor = coordinate_parser(start, width)
+#     stop_coor = coordinate_parser(stop, width)
+#     return paths
+
+def build_adjacency_list(vertices, width, height):
+    adjacent_list = []
+    for vertex in vertices:
+        links = [vertex]
+        for another in vertices.remove(vertex):
+            print("Checking path for {} to {} ".format(vertex, another))
+            link_weight = weight_calculate(vertex, another, width)
+            if link_weight != 0:
+                v = {another, link_weight}
+                links.append(v)
+        adjacent_list.append(links)
+    return adjacent_list
+
 
 def main():
     file = graph_load()
@@ -129,12 +154,19 @@ def main():
     target = file.get("exit_pos")
     edge_list = []
     vertices_list = []
+    virtual_vertices = []
     for point in graph.keys():
         level = calc_level(point, graph, g_height, g_width)
         print("Point {} : level {}".format(point, level))
-        if is_vertex(point, level, graph, source, target):
+        vertex = is_vertex(point, level, graph, source, target)
+        if vertex is True:
             vertices_list.append(point)
+        if vertex == 8:
+            virtual_vertices.append(point)
             # print("position {}={}".format(point, graph[point]))
     print("vertices_list : {}".format(vertices_list))
+    print("VIRTUAL vertices : {}".format(virtual_vertices))
+
+
 if __name__ == '__main__':
     main()
