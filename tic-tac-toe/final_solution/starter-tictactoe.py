@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import time
-import Tictactoe 
-from random import randint,choice
+import Tictactoe
+from random import randint, choice
+
 
 def RandomMove(b):
-    '''Return a random move from the list of possible moves'''
+    """Return a random move from the list of possible moves"""
     return b.legal_moves()
 
+
 def deroulementRandom(b):
-    '''Play the Tic-Tac-Toe game randomly.'''
+    """Play the Tic-Tac-Toe game randomly."""
     print("----------")
     print(b)
     if b.is_game_over():
@@ -26,8 +28,8 @@ def deroulementRandom(b):
 
 
 def getresult(b):
-    '''Function to evaluate the victory (or not) as X. Return 1 for victory, 0  
-       for draw and -1 for lose. '''
+    """Function to evaluate the victory (or not) as X. Return 1 for victory, 0
+       for draw and -1 for lose. """
     if b.result() == b._X:
         return 1
     elif b.result() == b._O:
@@ -42,6 +44,7 @@ print(board)
 ### RandomGame
 deroulementRandom(board)
 
-print("After the match, every move is undone (thanks to pop()): we get back to the initial board :")
+print(
+    "After the match, every move is undone (thanks to pop()): we get back to the initial board :"
+)
 print(board)
-
