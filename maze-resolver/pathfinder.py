@@ -23,12 +23,11 @@ def follow_path(start, stop, graph, width):
             destination -= width
     # Recursive call
     if destination == stop:
-        return {destination, weight}
-    else:
-        follow_path(destination, width, graph, stop)
+        return weight
+    # return weight
 
 
-def weight_calculate(start, stop, width):
+def weight_calculate(start, stop, graph, width):
     weight = 0
     start = coordinate_parser(start, width)
     stop = coordinate_parser(stop, width)
@@ -38,6 +37,9 @@ def weight_calculate(start, stop, width):
     # two verticle on same column
     elif start["col"] == stop["col"]:
         weight = stop["row"] - start["row"]
+    if weight == 0:
+        weight = follow_path(start, stop, graph, width)
+
     edge = (stop, weight)
     return edge
 
@@ -187,15 +189,16 @@ def main():
             vertices_list.append(point)
         elif vertex in [123, 129, 63, 69]:
             print("POINT {} , virtual moving {}".format(point, vertex))
-            virtual_vertices.append(point)
+            p = graph["point"] = vertex
+            virtual_vertices.append(p)
             # print("position {}={}".format(point, graph[point]))
     print("REAL vertices_list : {}".format(vertices_list))
     print("VIRTUAL vertices : {}".format(virtual_vertices))
 
-    combined_list = vertices_list.append(virtual_vertices)
-    print("Combined {}".format(combined_list))
+    # combined_list = vertices_list.extend(virtual_vertices)
+    # print("Combined {}".format(combined_list))
 
-    path = follow_path(source, target, graph, g_width)
+    path = weight_calculate(8, 21, graph, g_width)
 
     print(path)
 
